@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>循環的線索是否要衝200%爆擊率計算器</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a2d; --line:#26324c;
+  --text:#eef4ff; --muted:#96a4be; --accent:#62d9ff;
+  --good:#70e3a1; --bad:#ff7d91;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;
+  background:radial-gradient(circle at top,#172542 0,#0b1020 45%,#080c17 100%);
+}
+.wrap{max-width:1500px;margin:auto;padding:28px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}
+h1{margin:0;font-size:30px}
+.subtitle{margin-top:6px;color:var(--muted)}
+button{
+  background:#1b2740;border:1px solid var(--line);color:var(--text);
+  padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer
+}
+.grid{display:grid;grid-template-columns:1fr 1.15fr 1.05fr;gap:16px}
+.card{
+  background:linear-gradient(180deg,rgba(18,26,45,.98),rgba(14,21,37,.98));
+  border:1px solid var(--line);border-radius:18px;padding:18px;
+  box-shadow:0 16px 45px rgba(0,0,0,.22)
+}
+.step{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.12em}
+h2{margin:6px 0 16px;font-size:20px}
+.row{display:grid;grid-template-columns:minmax(130px,1fr) 145px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(38,50,76,.55)}
+.trade-head,.trade-row{display:grid;grid-template-columns:minmax(130px,1fr) 120px 120px;gap:8px;align-items:center}
+.trade-head{font-size:12px;color:var(--muted);padding-bottom:8px}
+.trade-row{padding:8px 0;border-bottom:1px solid rgba(38,50,76,.55)}
+.input-wrap{position:relative}
+input,select{
+  width:100%;background:#09101e;border:1px solid var(--line);color:var(--text);
+  border-radius:10px;padding:10px 34px 10px 10px;font-size:15px;outline:none
+}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(98,217,255,.1)}
+.label-note{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.55}
+.summary{
+  margin-top:10px;padding:12px 14px;border:1px solid var(--line);background:#0b1324;
+  border-radius:12px;display:flex;justify-content:space-between;gap:12px
+}
+.summary strong{color:var(--accent)}
+.metric{
+  display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;padding:9px 0;
+  border-bottom:1px solid rgba(38,50,76,.55);font-size:14px
+}
+.metric.head{color:var(--muted);font-size:12px}
+.metric .new{font-weight:800}
+.change.good{color:var(--good)} .change.bad{color:var(--bad)} .change.flat{color:var(--muted)}
+.results{display:grid;gap:12px;margin-top:18px}
+.result{
+  background:#0b1324;border:1px solid var(--line);border-radius:16px;padding:20px
+}
+.result .name{font-size:14px;color:var(--muted)}
+.result .value{font-size:34px;font-weight:900;margin-top:7px}
+.good{color:var(--good)} .bad{color:var(--bad)} .flat{color:var(--muted)}
+.audit{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.audit-title{font-size:13px;color:var(--muted);margin-bottom:8px}
+.audit-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:13px}
+.formula{
+  margin-top:16px;color:var(--muted);font-size:12px;line-height:1.65;
+  background:#0a111f;border-radius:12px;padding:12px
+}
+@media(max-width:1100px){
+  .grid{grid-template-columns:1fr}
+  .wrap{padding:16px}
+}
+</style>
+<script type="text/javascript" nonce="c4f9a8e78a6e4ac4ad9b89079dc" src="//local.adguard.org?ts=1786962595119&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000041788206a706957f46d970b2%26fn%3Dcritical_200_calculator_v8.html%26cd%3Dattachment%26ts%3D496379%26p%3Dfs%26cid%3D1%26sig%3D5c4fa85c085cd27c8b32c0bbf7e1c8cb62dad9ad85a54230a5ee73996450c98b%26v%3D0&amp;app=msedge.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script></head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>循環的線索是否要衝200%爆擊率計算器</h1>
+    <div class="subtitle">調整犧牲詞條與取得爆擊率，即時比較三種最終輸出。</div>
+  </div>
+  <button id="resetBtn">重設預設值</button>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <div class="step">STEP 1</div>
+    <h2>目前數值</h2>
+    <div class="row">
+      <label for="clueStars">循環的線索星數</label>
+      <select id="clueStars">
+        <option value="0">0 星</option>
+        <option value="1">1 星</option>
+        <option value="2">2 星</option>
+        <option value="3">3 星</option>
+        <option value="4">4 星</option>
+        <option value="5">5 星</option>
+      </select>
+    </div>
+    <div id="baseInputs"></div>
+    <div class="note">除主屬性外皆為百分比。所有詞條最低為 0。</div>
+  </section>
+
+  <section class="card">
+    <div class="step">STEP 2</div>
+    <h2>犧牲詞條與取得爆擊率</h2>
+    <div class="trade-head"><div>詞條</div><div>下降 N</div><div>取得爆擊率 M</div></div>
+    <div id="tradeInputs"></div>
+
+    <div class="summary"><span>總取得爆擊率</span><strong id="critGain">+0%</strong></div>
+    <div class="summary"><span>新爆擊率</span><strong id="newCritRate">0%</strong></div>
+    <div class="summary"><span>基本攻擊增加</span><strong id="basicAdd">+0 個百分點</strong></div>
+  </section>
+
+  <section class="card">
+    <div class="step">STEP 3</div>
+    <h2>即時計算結果</h2>
+
+    <div class="metric head"><div>項目</div><div>原值</div><div>新值</div></div>
+    <div id="metrics"></div>
+
+    <div class="results">
+      <div class="result">
+        <div class="name">對 BOSS 輸出變化</div>
+        <div class="value" id="bossResult">0.00%</div>
+      </div>
+      <div class="result">
+        <div class="name">對一般怪物輸出變化</div>
+        <div class="value" id="normalResult">0.00%</div>
+      </div>
+      <div class="result">
+        <div class="name">對玩家輸出變化</div>
+        <div class="value" id="playerResult">0.00%</div>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+
+<script>
+const fields = [
+  ["basic","基本攻擊傷害",50,"%"],
+  ["critDmg","爆擊傷害",200,"%"],
+  ["critRate","爆擊率",100,"%"],
+  ["attackPower","攻擊力",600000,""],
+  ["boss","BOSS 傷害",200,"%"],
+  ["normal","一般怪物傷害",100,"%"],
+  ["maxAtk","最大攻擊",250,"%"],
+  ["minAtk","最小攻擊",200,"%"],
+  ["mainStat","主屬性",30000,""],
+  ["mainPct","主屬性%",300,"%"],
+  ["dmgPct","傷害%",500,"%"],
+  ["finalDmg","終傷%",50,"%"]
+];
+
+const tradable = fields.filter(([id]) => id !== "basic" && id !== "critRate");
+
+function inputHTML(id,value,unit){
+  const isPlainNumber = id==="attackPower" || id==="mainStat";
+  const shownValue = isPlainNumber ? Number(value).toLocaleString("en-US") : value;
+  return `<div class="input-wrap">
+    <input ${isPlainNumber ? 'type="text" inputmode="decimal"' : 'type="number" min="0" step="any"'}
+      id="${id}" value="${shownValue}" data-plain-number="${isPlainNumber ? "1" : "0"}">
+    ${unit ? `<span class="unit">${unit}</span>` : ""}
+  </div>`;
+}
+
+document.getElementById("baseInputs").innerHTML = fields.map(([id,label,val,unit]) => {
+  const note = id === "attackPower"
+    ? `<span class="label-note">不含%的原始攻擊力</span>`
+    : "";
+  return `<div class="row"><label for="${id}">${label}${note}</label>${inputHTML(id,val,unit)}</div>`;
+}).join("");
+
+document.getElementById("tradeInputs").innerHTML = tradable.map(([id,label,,unit]) =>
+  `<div class="trade-row">
+    <div>${label}</div>
+    ${inputHTML("drop_"+id,0,unit)}
+    ${inputHTML("gain_"+id,0,"%")}
+  </div>`
+).join("");
+
+function val(id){
+  const el=document.getElementById(id);
+  const raw=String(el.value).replace(/,/g,"");
+  let x=parseFloat(raw);
+  if(!Number.isFinite(x)) x=0;
+  if(x<0){x=0;el.value=0}
+  return x;
+}
+
+function formatPlainNumberInput(el){
+  if(el.dataset.plainNumber!=="1") return;
+  const raw=String(el.value).replace(/,/g,"").trim();
+  if(raw===""){ return; }
+  const n=Number(raw);
+  if(Number.isFinite(n) && n>=0){
+    el.value=n.toLocaleString("en-US",{maximumFractionDigits:2});
+  }
+}
+
+function pct(x){return `${x.toFixed(2).replace(/\.00$/,"")}%`;}
+function num(x){return x.toLocaleString(undefined,{maximumFractionDigits:2});}
+function changeClass(x){return x>1e-9?"good":x<-1e-9?"bad":"flat";}
+function signedPct(mult){
+  const delta=(mult-1)*100;
+  return `${delta>1e-9?"+":""}${delta.toFixed(2)}%`;
+}
+function setResult(id,mult){
+  const el=document.getElementById(id);
+  const delta=mult-1;
+  el.textContent=signedPct(mult);
+  el.className="value "+(delta>1e-9?"good":delta<-1e-9?"bad":"flat");
+}
+function safeRatio(a,b){return b===0 ? (a===0?1:0) : a/b;}
+
+function calc(){
+  const old={};
+  fields.forEach(([id]) => old[id]=val(id));
+
+  const drops={}, gains={};
+  tradable.forEach(([id])=>{
+    drops[id]=val("drop_"+id);
+    gains[id]=val("gain_"+id);
+  });
+
+  const totalGain=Object.values(gains).reduce((a,b)=>a+b,0);
+  const newCrit=old.critRate+totalGain;
+
+  const clueStars=parseInt(document.getElementById("clueStars").value,10) || 0;
+  const starMultiplier=[6,7.2,8.4,9.6,10.8,12][clueStars];
+
+  // 100% 以下不產生負層數；200% 以上最多只算 10 層。
+  const critStacks=Math.max(0,Math.min(10,Math.floor((newCrit-100)/10)));
+  const rawBasicAdd=critStacks*starMultiplier;
+  const newBasic=Math.max(0,old.basic+rawBasicAdd);
+  const actualBasicAdd=newBasic-old.basic;
+
+  const nw={...old};
+  tradable.forEach(([id])=>{
+    if(id==="finalDmg"){
+      // 終傷採乘算下降：
+      // 新終傷 = (100 + 原終傷) × (1 - 下降% / 100) - 100
+      nw[id]=Math.max(0,(100+old[id])*(1-drops[id]/100)-100);
+    }else{
+      nw[id]=Math.max(0,old[id]-drops[id]);
+    }
+  });
+  nw.critRate=newCrit;
+  nw.basic=newBasic;
+
+  const oldAvg=(old.maxAtk+old.minAtk)/2;
+  const newAvg=(nw.maxAtk+nw.minAtk)/2;
+
+  const oldDamage=old.attackPower*old.mainStat*(1+old.mainPct/100)*(1+old.dmgPct/100);
+  const newDamage=nw.attackPower*nw.mainStat*(1+nw.mainPct/100)*(1+nw.dmgPct/100);
+
+  const basicMul=(100+nw.basic)/(100+old.basic);
+  const critDmgMul=(100+nw.critDmg)/(100+old.critDmg);
+  const bossMul=(100+nw.boss)/(100+old.boss);
+  const normalMul=(100+nw.normal)/(100+old.normal);
+  const avgMul=safeRatio(newAvg,oldAvg);
+  const damageMul=safeRatio(newDamage,oldDamage);
+  const finalDmgMul=(100+nw.finalDmg)/(100+old.finalDmg);
+
+  const bossOut=basicMul*critDmgMul*bossMul*avgMul*damageMul*finalDmgMul;
+  const normalOut=basicMul*critDmgMul*normalMul*avgMul*damageMul*finalDmgMul;
+  const playerOut=Math.sqrt(Math.max(0,basicMul*critDmgMul*avgMul*damageMul*finalDmgMul));
+
+  document.getElementById("critGain").textContent=`+${pct(totalGain)}`;
+  document.getElementById("newCritRate").textContent=pct(newCrit);
+  document.getElementById("basicAdd").textContent=
+    `${actualBasicAdd>=0?"+":""}${actualBasicAdd.toFixed(1).replace(/\.0$/,"")} %`;
+
+  const displayFields=[
+    ["basic","基本攻擊傷害","%"],
+    ["critDmg","爆擊傷害","%"],
+    ["critRate","爆擊率","%"],
+    ["attackPower","攻擊力",""],
+    ["boss","BOSS 傷害","%"],
+    ["normal","一般怪物傷害","%"],
+    ["maxAtk","最大攻擊","%"],
+    ["minAtk","最小攻擊","%"],
+    ["mainStat","主屬性",""],
+    ["mainPct","主屬性%","%"],
+    ["dmgPct","傷害%","%"],
+    ["finalDmg","終傷%","%"]
+  ];
+
+  let rows=displayFields.map(([id,label,unit])=>{
+    const diff=nw[id]-old[id];
+    const oldText=unit?pct(old[id]):num(old[id]);
+    const newText=unit?pct(nw[id]):num(nw[id]);
+    const diffText=diff===0 ? "" :
+      ` <span class="change ${changeClass(diff)}">(${diff>0?"+":""}${unit?pct(diff):num(diff)})</span>`;
+    return `<div class="metric"><div>${label}</div><div>${oldText}</div><div class="new">${newText}${diffText}</div></div>`;
+  }).join("");
+
+  document.getElementById("metrics").innerHTML=rows;
+
+  setResult("bossResult",bossOut);
+  setResult("normalResult",normalOut);
+  setResult("playerResult",playerOut);
+}
+
+document.addEventListener("input",calc);
+document.addEventListener("change",calc);
+document.addEventListener("blur",(e)=>{
+  if(e.target && e.target.matches('input[data-plain-number="1"]')){
+    formatPlainNumberInput(e.target);
+    calc();
+  }
+},true);
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  document.getElementById("clueStars").value=0;
+  fields.forEach(([id,,v])=>{
+    const el=document.getElementById(id);
+    el.value=(id==="attackPower" || id==="mainStat")
+      ? Number(v).toLocaleString("en-US")
+      : v;
+  });
+  tradable.forEach(([id])=>{
+    document.getElementById("drop_"+id).value=0;
+    document.getElementById("gain_"+id).value=0;
+  });
+  calc();
+});
+
+calc();
+</script>
+</body>
+</html>
