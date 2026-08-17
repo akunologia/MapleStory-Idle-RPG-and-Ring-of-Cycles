@@ -16,7 +16,7 @@ body{
   font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;
   background:radial-gradient(circle at top,#172542 0,#0b1020 45%,#080c17 100%);
 }
-.wrap{max-width:1500px;margin:auto;padding:28px}
+.wrap{max-width:1580px;margin:auto;padding:29px}
 header{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}
 h1{margin:0;font-size:30px}
 .subtitle{margin-top:6px;color:var(--muted)}
@@ -24,18 +24,29 @@ button{
   background:#1b2740;border:1px solid var(--line);color:var(--text);
   padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer
 }
-.grid{display:grid;grid-template-columns:1fr 1.15fr 1.05fr;gap:16px}
+.grid{display:grid;grid-template-columns:1fr 1.618fr 1fr;gap:18px}
 .card{
   background:linear-gradient(180deg,rgba(18,26,45,.98),rgba(14,21,37,.98));
-  border:1px solid var(--line);border-radius:18px;padding:18px;
+  border:1px solid var(--line);border-radius:18px;padding:20px;
   box-shadow:0 16px 45px rgba(0,0,0,.22)
 }
 .step{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.12em}
 h2{margin:6px 0 16px;font-size:20px}
-.row{display:grid;grid-template-columns:minmax(130px,1fr) 145px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(38,50,76,.55)}
-.trade-head,.trade-row{display:grid;grid-template-columns:minmax(130px,1fr) 120px 120px;gap:8px;align-items:center}
+.row{display:grid;grid-template-columns:minmax(150px,1.618fr) minmax(120px,1fr);gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(38,50,76,.55)}
+.trade-head,.trade-row{display:grid;grid-template-columns:minmax(125px,1.618fr) minmax(150px,1fr) minmax(110px,.75fr);gap:10px;align-items:center}
 .trade-head{font-size:12px;color:var(--muted);padding-bottom:8px}
 .trade-row{padding:8px 0;border-bottom:1px solid rgba(38,50,76,.55)}
+
+.adjust-wrap{display:grid;grid-template-columns:48px 1fr;gap:6px}
+.adjust-wrap select{padding:10px 8px;text-align:center;font-weight:900}
+.book-box{margin:0 0 18px;padding:14px;border:1px solid var(--line);background:#0b1324;border-radius:14px}
+.book-title{font-weight:800;margin-bottom:10px}
+.book-controls{display:grid;grid-template-columns:1.618fr 1fr;gap:10px}
+.book-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.book-mode label{display:flex;align-items:center;justify-content:center;gap:6px;background:#09101e;border:1px solid var(--line);border-radius:10px;padding:9px;cursor:pointer}
+.book-mode input{width:auto;padding:0}
+.book-stats{margin-top:9px;color:var(--muted);font-size:12px;line-height:1.55}
+
 .input-wrap{position:relative}
 input,select{
   width:100%;background:#09101e;border:1px solid var(--line);color:var(--text);
@@ -50,8 +61,9 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(98
   border-radius:12px;display:flex;justify-content:space-between;gap:12px
 }
 .summary strong{color:var(--accent)}
+.defense-grid{display:grid;gap:10px;margin-top:14px}.defense-grid label{display:grid;grid-template-columns:1.618fr 1fr;gap:12px;align-items:center;font-size:14px}.defense-grid input{padding-right:10px}
 .metric{
-  display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;padding:9px 0;
+  display:grid;grid-template-columns:1.618fr 1fr 1fr;gap:10px;padding:10px 0;
   border-bottom:1px solid rgba(38,50,76,.55);font-size:14px
 }
 .metric.head{color:var(--muted);font-size:12px}
@@ -76,7 +88,7 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(98
   .wrap{padding:16px}
 }
 </style>
-<script type="text/javascript" nonce="c4f9a8e78a6e4ac4ad9b89079dc" src="//local.adguard.org?ts=1786962595119&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000041788206a706957f46d970b2%26fn%3Dcritical_200_calculator_v8.html%26cd%3Dattachment%26ts%3D496379%26p%3Dfs%26cid%3D1%26sig%3D5c4fa85c085cd27c8b32c0bbf7e1c8cb62dad9ad85a54230a5ee73996450c98b%26v%3D0&amp;app=msedge.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script></head>
+<script type="text/javascript" nonce="c4f9a8e78a6e4ac4ad9b89079dc" src="//local.adguard.org?ts=1786966197690&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000c1988207bed05ee6653143b2%26fn%3Dcritical_200_calculator_v12.html%26cd%3Dattachment%26ts%3D496381%26p%3Dfs%26cid%3D1%26sig%3Dbe7c62fe6a4f94e9e596123fc2a398c8599ffc003d4a44d68ad7d76cf3508e4f%26v%3D0&amp;app=msedge.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script></head>
 <body>
 <div class="wrap">
 <header>
@@ -91,6 +103,26 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(98
   <section class="card">
     <div class="step">STEP 1</div>
     <h2>目前數值</h2>
+
+    <div class="book-box">
+      <div class="book-title">上古魔書</div>
+      <div class="book-controls">
+        <div class="book-mode">
+          <label><input type="radio" name="ancientBook" value="none" checked> 沒有</label>
+          <label><input type="radio" name="ancientBook" value="carry"> 攜帶</label>
+        </div>
+        <select id="bookStars" disabled>
+          <option value="0">0 星</option>
+          <option value="1">1 星</option>
+          <option value="2">2 星</option>
+          <option value="3">3 星</option>
+          <option value="4">4 星</option>
+          <option value="5">5 星</option>
+        </select>
+      </div>
+      <div class="book-stats" id="bookStats">目前未攜帶上古魔書</div>
+    </div>
+
     <div class="row">
       <label for="clueStars">循環的線索星數</label>
       <select id="clueStars">
@@ -103,18 +135,24 @@ input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(98
       </select>
     </div>
     <div id="baseInputs"></div>
-    <div class="note">除主屬性外皆為百分比。所有詞條最低為 0。</div>
+    <div class="note">除主屬性外皆為百分比。所有詞條最低為 0。<br>不計入副屬性，因為影響太小。</div>
   </section>
 
   <section class="card">
     <div class="step">STEP 2</div>
-    <h2>犧牲詞條與取得爆擊率</h2>
-    <div class="trade-head"><div>詞條</div><div>下降 N</div><div>取得爆擊率 M</div></div>
+    <h2>詞條調整與取得爆擊率</h2>
+    <div class="trade-head"><div>詞條</div><div>下降/上升數值</div><div>取得爆擊率</div></div>
     <div id="tradeInputs"></div>
 
     <div class="summary"><span>總取得爆擊率</span><strong id="critGain">+0%</strong></div>
     <div class="summary"><span>新爆擊率</span><strong id="newCritRate">0%</strong></div>
-    <div class="summary"><span>基本攻擊增加</span><strong id="basicAdd">+0 個百分點</strong></div>
+    <div class="summary"><span>基本攻擊增加</span><strong id="basicAdd">+0 %</strong></div>
+
+    <div class="defense-grid">
+      <label>BOSS防禦值<input type="number" min="0" step="any" id="bossDefense" value="62100"></label>
+      <label>一般怪物防禦值<input type="number" min="0" step="any" id="normalDefense" value="5000"></label>
+      <label>對手玩家防禦值<input type="number" min="0" step="any" id="playerDefense" value="60000"></label>
+    </div>
   </section>
 
   <section class="card">
@@ -155,6 +193,8 @@ const fields = [
   ["mainStat","主屬性",30000,""],
   ["mainPct","主屬性%",300,"%"],
   ["dmgPct","傷害%",500,"%"],
+  ["attackSpeed","攻擊速度",70,"%"],
+  ["defPen","防禦穿透",30,"%"],
   ["finalDmg","終傷%",50,"%"]
 ];
 
@@ -180,7 +220,13 @@ document.getElementById("baseInputs").innerHTML = fields.map(([id,label,val,unit
 document.getElementById("tradeInputs").innerHTML = tradable.map(([id,label,,unit]) =>
   `<div class="trade-row">
     <div>${label}</div>
-    ${inputHTML("drop_"+id,0,unit)}
+    <div class="adjust-wrap">
+      <select id="dir_${id}" aria-label="${label}上升或下降">
+        <option value="-">−</option>
+        <option value="+">＋</option>
+      </select>
+      ${inputHTML("drop_"+id,0,unit)}
+    </div>
     ${inputHTML("gain_"+id,0,"%")}
   </div>`
 ).join("");
@@ -223,14 +269,22 @@ function calc(){
   const old={};
   fields.forEach(([id]) => old[id]=val(id));
 
-  const drops={}, gains={};
+  const drops={}, gains={}, dirs={};
   tradable.forEach(([id])=>{
     drops[id]=val("drop_"+id);
     gains[id]=val("gain_"+id);
+    dirs[id]=document.getElementById("dir_"+id).value;
   });
 
   const totalGain=Object.values(gains).reduce((a,b)=>a+b,0);
   const newCrit=old.critRate+totalGain;
+
+  const bookCarry=document.querySelector('input[name="ancientBook"]:checked').value==="carry";
+  const bookStars=parseInt(document.getElementById("bookStars").value,10) || 0;
+  const bookCritValues=[10,12,14,16,18,20];
+  const bookCritDmgValues=[30,36,42,48,54,60];
+  const bookCritAdd=bookCarry ? bookCritValues[bookStars] : 0;
+  const bookCritDmgPct=bookCarry ? bookCritDmgValues[bookStars] : 0;
 
   const clueStars=parseInt(document.getElementById("clueStars").value,10) || 0;
   const starMultiplier=[6,7.2,8.4,9.6,10.8,12][clueStars];
@@ -243,14 +297,25 @@ function calc(){
 
   const nw={...old};
   tradable.forEach(([id])=>{
+    const isIncrease=dirs[id]==="+";
+    const signedAmount=(isIncrease ? 1 : -1)*drops[id];
+
     if(id==="finalDmg"){
-      // 終傷採乘算下降：
-      // 新終傷 = (100 + 原終傷) × (1 - 下降% / 100) - 100
-      nw[id]=Math.max(0,(100+old[id])*(1-drops[id]/100)-100);
+      nw[id]=Math.max(0,(100+old[id])*(1+signedAmount/100)-100);
+    }else if(id==="attackSpeed"){
+      nw[id]=Math.max(0,Math.min(150,old[id] + signedAmount*((150-old[id])/150)));
+    }else if(id==="defPen"){
+      nw[id]=Math.max(0,Math.min(100,old[id] + signedAmount*((100-old[id])/100)));
     }else{
-      nw[id]=Math.max(0,old[id]-drops[id]);
+      nw[id]=Math.max(0,old[id] + signedAmount);
     }
   });
+
+  if(bookCarry){
+    const critRateIncrease=Math.max(0,newCrit-old.critRate);
+    nw.critDmg=Math.max(0,nw.critDmg + critRateIncrease*(bookCritDmgPct/100));
+  }
+
   nw.critRate=newCrit;
   nw.basic=newBasic;
 
@@ -267,13 +332,28 @@ function calc(){
   const avgMul=safeRatio(newAvg,oldAvg);
   const damageMul=safeRatio(newDamage,oldDamage);
   const finalDmgMul=(100+nw.finalDmg)/(100+old.finalDmg);
+  const attackSpeedMul=(100+nw.attackSpeed)/(100+old.attackSpeed);
 
-  const bossOut=basicMul*critDmgMul*bossMul*avgMul*damageMul*finalDmgMul;
-  const normalOut=basicMul*critDmgMul*normalMul*avgMul*damageMul*finalDmgMul;
-  const playerOut=Math.sqrt(Math.max(0,basicMul*critDmgMul*avgMul*damageMul*finalDmgMul));
+  const bossDefense=val("bossDefense");
+  const normalDefense=val("normalDefense");
+  const playerDefense=val("playerDefense");
+  const oldPen=old.defPen/100;
+  const newPen=nw.defPen/100;
+
+  const bossDefenseMul=(6000 + bossDefense*(1-oldPen))/(6000 + bossDefense*(1-newPen));
+  const normalDefenseMul=(6000 + normalDefense*(1-oldPen))/(6000 + normalDefense*(1-newPen));
+  const playerDefenseMul=(5000 + playerDefense*(1-oldPen))/(5000 + playerDefense*(1-newPen));
+
+  const bossOut=basicMul*critDmgMul*bossMul*avgMul*damageMul*finalDmgMul*attackSpeedMul*bossDefenseMul;
+  const normalOut=basicMul*critDmgMul*normalMul*avgMul*damageMul*finalDmgMul*attackSpeedMul*normalDefenseMul;
+  const playerCore=basicMul*critDmgMul*avgMul*damageMul*finalDmgMul*playerDefenseMul;
+  const playerOut=Math.sqrt(Math.max(0,playerCore))*attackSpeedMul;
 
   document.getElementById("critGain").textContent=`+${pct(totalGain)}`;
   document.getElementById("newCritRate").textContent=pct(newCrit);
+  document.getElementById("bookStats").textContent=bookCarry
+    ? `${bookStars} 星：爆擊率 +${bookCritAdd}%；爆擊傷害追加 ${bookCritDmgPct}%`
+    : "目前未攜帶上古魔書";
   document.getElementById("basicAdd").textContent=
     `${actualBasicAdd>=0?"+":""}${actualBasicAdd.toFixed(1).replace(/\.0$/,"")} %`;
 
@@ -289,6 +369,8 @@ function calc(){
     ["mainStat","主屬性",""],
     ["mainPct","主屬性%","%"],
     ["dmgPct","傷害%","%"],
+    ["attackSpeed","攻擊速度","%"],
+    ["defPen","防禦穿透","%"],
     ["finalDmg","終傷%","%"]
   ];
 
@@ -310,6 +392,15 @@ function calc(){
 
 document.addEventListener("input",calc);
 document.addEventListener("change",calc);
+document.addEventListener("change",(e)=>{
+  if(e.target && e.target.name==="ancientBook"){
+    const carry=e.target.value==="carry" && e.target.checked;
+    const stars=document.getElementById("bookStars");
+    stars.disabled=!carry;
+    if(carry) stars.value="0";
+    calc();
+  }
+});
 document.addEventListener("blur",(e)=>{
   if(e.target && e.target.matches('input[data-plain-number="1"]')){
     formatPlainNumberInput(e.target);
@@ -328,7 +419,14 @@ document.getElementById("resetBtn").addEventListener("click",()=>{
   tradable.forEach(([id])=>{
     document.getElementById("drop_"+id).value=0;
     document.getElementById("gain_"+id).value=0;
+    document.getElementById("dir_"+id).value="-";
   });
+  document.querySelector('input[name="ancientBook"][value="none"]').checked=true;
+  document.getElementById("bookStars").value="0";
+  document.getElementById("bookStars").disabled=true;
+  document.getElementById("bossDefense").value=62100;
+  document.getElementById("normalDefense").value=5000;
+  document.getElementById("playerDefense").value=60000;
   calc();
 });
 
