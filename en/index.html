@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>循環的線索是否要衝200%爆擊率計算器</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a2d; --line:#26324c;
+  --text:#eef4ff; --muted:#96a4be; --accent:#62d9ff;
+  --good:#70e3a1; --bad:#ff7d91;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;
+  background:radial-gradient(circle at top,#172542 0,#0b1020 45%,#080c17 100%);
+}
+.wrap{max-width:1580px;margin:auto;padding:29px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}
+h1{margin:0;font-size:30px}
+.subtitle{margin-top:6px;color:var(--muted)}
+button{
+  background:#1b2740;border:1px solid var(--line);color:var(--text);
+  padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer
+}
+.grid{display:grid;grid-template-columns:1fr 1.618fr 1fr;gap:18px}
+.card{
+  background:linear-gradient(180deg,rgba(18,26,45,.98),rgba(14,21,37,.98));
+  border:1px solid var(--line);border-radius:18px;padding:20px;
+  box-shadow:0 16px 45px rgba(0,0,0,.22)
+}
+.step{font-size:12px;color:var(--accent);font-weight:800;letter-spacing:.12em}
+h2{margin:6px 0 16px;font-size:20px}
+.row{display:grid;grid-template-columns:minmax(150px,1.618fr) minmax(120px,1fr);gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(38,50,76,.55)}
+.trade-head,.trade-row{display:grid;grid-template-columns:minmax(125px,1.618fr) minmax(150px,1fr) minmax(110px,.75fr);gap:10px;align-items:center}
+.trade-head{font-size:12px;color:var(--muted);padding-bottom:8px}
+.trade-row{padding:8px 0;border-bottom:1px solid rgba(38,50,76,.55)}
+
+.adjust-wrap{display:grid;grid-template-columns:48px 1fr;gap:6px}
+.adjust-wrap select{padding:10px 8px;text-align:center;font-weight:900}
+.book-box{margin:0 0 18px;padding:14px;border:1px solid var(--line);background:#0b1324;border-radius:14px}
+.book-title{font-weight:800;margin-bottom:10px}
+.book-controls{display:grid;grid-template-columns:1.618fr 1fr;gap:10px}
+.book-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.book-mode label{display:flex;align-items:center;justify-content:center;gap:6px;background:#09101e;border:1px solid var(--line);border-radius:10px;padding:9px;cursor:pointer}
+.book-mode input{width:auto;padding:0}
+.book-stats{margin-top:9px;color:var(--muted);font-size:12px;line-height:1.55}
+
+.input-wrap{position:relative}
+input,select{
+  width:100%;background:#09101e;border:1px solid var(--line);color:var(--text);
+  border-radius:10px;padding:10px 34px 10px 10px;font-size:15px;outline:none
+}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(98,217,255,.1)}
+.label-note{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.55}
+.summary{
+  margin-top:10px;padding:12px 14px;border:1px solid var(--line);background:#0b1324;
+  border-radius:12px;display:flex;justify-content:space-between;gap:12px
+}
+.summary strong{color:var(--accent)}
+.defense-grid{display:grid;gap:10px;margin-top:14px}.defense-grid label{display:grid;grid-template-columns:1.618fr 1fr;gap:12px;align-items:center;font-size:14px}.defense-grid input{padding-right:10px}
+.metric{
+  display:grid;grid-template-columns:1.618fr 1fr 1fr;gap:10px;padding:10px 0;
+  border-bottom:1px solid rgba(38,50,76,.55);font-size:14px
+}
+.metric.head{color:var(--muted);font-size:12px}
+.metric .new{font-weight:800}
+.change.good{color:var(--good)} .change.bad{color:var(--bad)} .change.flat{color:var(--muted)}
+.results{display:grid;gap:12px;margin-top:18px}
+.result{
+  background:#0b1324;border:1px solid var(--line);border-radius:16px;padding:20px
+}
+.result .name{font-size:14px;color:var(--muted)}
+.result .value{font-size:34px;font-weight:900;margin-top:7px}
+.good{color:var(--good)} .bad{color:var(--bad)} .flat{color:var(--muted)}
+.audit{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.audit-title{font-size:13px;color:var(--muted);margin-bottom:8px}
+.audit-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:13px}
+.formula{
+  margin-top:16px;color:var(--muted);font-size:12px;line-height:1.65;
+  background:#0a111f;border-radius:12px;padding:12px
+}
+@media(max-width:1100px){
+  .grid{grid-template-columns:1fr}
+  .wrap{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1 data-i18n="title">循環的線索是否要衝200%爆擊率計算器</h1>
+    <div class="subtitle" data-i18n="subtitle">調整犧牲詞條與取得爆擊率，即時比較三種最終輸出。</div>
+  </div>
+  <div style="display:flex;gap:10px"><button id="langBtn">English</button><button id="resetBtn">重設預設值</button></div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <div class="step">STEP 1</div>
+    <h2 data-i18n="currentValues">目前數值</h2>
+
+    <div class="book-box">
+      <div class="book-title" data-i18n="ancientBook">上古魔書</div>
+      <div class="book-controls">
+        <div class="book-mode">
+          <label><input type="radio" name="ancientBook" value="none" checked> <span data-i18n="none">沒有</span></label>
+          <label><input type="radio" name="ancientBook" value="carry"> <span data-i18n="carry">攜帶</span></label>
+        </div>
+        <select id="bookStars" disabled>
+          <option value="0">0 星</option>
+          <option value="1">1 星</option>
+          <option value="2">2 星</option>
+          <option value="3">3 星</option>
+          <option value="4">4 星</option>
+          <option value="5">5 星</option>
+        </select>
+      </div>
+      <div class="book-stats" id="bookStats">目前未攜帶上古魔書</div>
+    </div>
+
+    <div class="row">
+      <label for="clueStars" data-i18n="ringStars">循環的線索星數</label>
+      <select id="clueStars">
+        <option value="0">0 星</option>
+        <option value="1">1 星</option>
+        <option value="2">2 星</option>
+        <option value="3">3 星</option>
+        <option value="4">4 星</option>
+        <option value="5">5 星</option>
+      </select>
+    </div>
+    <div id="baseInputs"></div>
+    <div class="note" data-i18n="note">除主屬性外皆為百分比。所有詞條最低為 0。<br>不計入副屬性，因為影響太小。</div>
+  </section>
+
+  <section class="card">
+    <div class="step">STEP 2</div>
+    <h2 data-i18n="adjustTitle">詞條調整與取得爆擊率</h2>
+    <div class="trade-head"><div data-i18n="option">詞條</div><div data-i18n="adjustValue">下降/上升數值</div><div data-i18n="gainCrit">取得爆擊率</div></div>
+    <div id="tradeInputs"></div>
+
+    <div class="summary"><span data-i18n="totalCritGain">總取得爆擊率</span><strong id="critGain">+0%</strong></div>
+    <div class="summary"><span data-i18n="newCritRate">新爆擊率</span><strong id="newCritRate">0%</strong></div>
+    <div class="summary"><span data-i18n="basicAtkGain">基本攻擊增加</span><strong id="basicAdd">+0 %</strong></div>
+
+    <div class="defense-grid">
+      <label><span data-i18n="bossDefense">BOSS防禦值</span><input type="number" min="0" step="any" id="bossDefense" value="62100"></label>
+      <label><span data-i18n="normalDefense">一般怪物防禦值</span><input type="number" min="0" step="any" id="normalDefense" value="5000"></label>
+      <label><span data-i18n="playerDefense">對手玩家防禦值</span><input type="number" min="0" step="any" id="playerDefense" value="60000"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="step">STEP 3</div>
+    <h2 data-i18n="results">即時計算結果</h2>
+
+    <div class="metric head"><div data-i18n="item">項目</div><div data-i18n="oldValue">原值</div><div data-i18n="newValue">新值</div></div>
+    <div id="metrics"></div>
+
+    <div class="results">
+      <div class="result">
+        <div class="name" data-i18n="bossOutput">對 BOSS 輸出變化</div>
+        <div class="value" id="bossResult">0.00%</div>
+      </div>
+      <div class="result">
+        <div class="name" data-i18n="normalOutput">對一般怪物輸出變化</div>
+        <div class="value" id="normalResult">0.00%</div>
+      </div>
+      <div class="result">
+        <div class="name" data-i18n="playerOutput">對玩家輸出變化</div>
+        <div class="value" id="playerResult">0.00%</div>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+
+<script>
+const fields = [
+  ["basic","基本攻擊傷害",50,"%"],
+  ["critDmg","爆擊傷害",200,"%"],
+  ["critRate","爆擊率",100,"%"],
+  ["attackPower","攻擊力",600000,""],
+  ["boss","BOSS 傷害",200,"%"],
+  ["normal","一般怪物傷害",100,"%"],
+  ["maxAtk","最大攻擊",250,"%"],
+  ["minAtk","最小攻擊",200,"%"],
+  ["mainStat","主屬性",30000,""],
+  ["mainPct","主屬性%",300,"%"],
+  ["dmgPct","傷害%",500,"%"],
+  ["attackSpeed","攻擊速度",70,"%"],
+  ["defPen","防禦穿透",30,"%"],
+  ["finalDmg","終傷%",50,"%"]
+];
+
+const tradable = fields.filter(([id]) => id !== "basic" && id !== "critRate");
+
+let currentLang="en";
+const i18n={
+  zh:{
+    title:"循環的線索是否要衝200%爆擊率計算器",
+    subtitle:"調整犧牲詞條與取得爆擊率，即時比較三種最終輸出。",
+    currentValues:"目前數值",ancientBook:"上古魔書",none:"沒有",carry:"攜帶",
+    ringStars:"循環的線索星數",
+    note:"除主屬性外皆為百分比。所有詞條最低為 0。<br>不計入副屬性，因為影響太小。",
+    adjustTitle:"詞條調整與取得爆擊率",option:"詞條",adjustValue:"下降/上升數值",gainCrit:"取得爆擊率",
+    totalCritGain:"總取得爆擊率",newCritRate:"新爆擊率",basicAtkGain:"基本攻擊增加",
+    bossDefense:"BOSS防禦值",normalDefense:"一般怪物防禦值",playerDefense:"對手玩家防禦值",
+    results:"即時計算結果",item:"項目",oldValue:"原值",newValue:"新值",
+    bossOutput:"對 BOSS 輸出變化",normalOutput:"對一般怪物輸出變化",playerOutput:"對玩家輸出變化",
+    reset:"重設預設值",lang:"English",attackNote:"不含%的原始攻擊力",
+    bookNone:"目前未攜帶上古魔書",
+    bookLine:(star,crit,dmg)=>`${star} 星：爆擊率 +${crit}%；爆擊傷害追加 ${dmg}%`
+  },
+  en:{
+    title:"Should Ring of Cycles Reach 200% Critical Rate?",
+    subtitle:"Adjust options and gained Critical Rate to compare final output changes in real time.",
+    currentValues:"Current Values",ancientBook:"The book of Ancient",none:"None",carry:"Equipped",
+    ringStars:"Ring of Cycles Stars",
+    note:"",
+    adjustTitle:"Option Adjustment & Critical Rate Gain",option:"Option",adjustValue:"Decrease / Increase Value",gainCrit:"Gained Critical Rate",
+    totalCritGain:"Total Gained Critical Rate",newCritRate:"New Critical Rate",basicAtkGain:"Basic Attack Damage Increase",
+    bossDefense:"Boss Defense",normalDefense:"Normal Monster Defense",playerDefense:"Opponent Player Defense",
+    results:"Real-time Results",item:"Item",oldValue:"Original",newValue:"New",
+    bossOutput:"Boss Monster Output Change",normalOutput:"Normal Monster Output Change",playerOutput:"Player Output Change",
+    reset:"Reset Defaults",lang:"繁體中文",attackNote:"Raw Attack value excluding %",
+    bookNone:"The book of Ancient is not equipped",
+    bookLine:(star,crit,dmg)=>`${star}⭐: Critical Rate +${crit}%; Critical Damage Bonus ${dmg}%`
+  }
+};
+const fieldNames={
+  zh:{basic:"基本攻擊傷害",critDmg:"爆擊傷害",critRate:"爆擊率",attackPower:"攻擊力",boss:"BOSS 傷害",normal:"一般怪物傷害",maxAtk:"最大攻擊",minAtk:"最小攻擊",mainStat:"主屬性",mainPct:"主屬性%",dmgPct:"傷害%",attackSpeed:"攻擊速度",defPen:"防禦穿透",finalDmg:"終傷%"},
+  en:{basic:"Basic Attack Damage",critDmg:"Critical Damage",critRate:"Critical Rate",attackPower:"Attack",boss:"Boss Monster Damage",normal:"Normal Monster Damage",maxAtk:"Max Damage Multiplier",minAtk:"Min Damage Multiplier",mainStat:"Main Stat",mainPct:"Main Stat%",dmgPct:"Damage%",attackSpeed:"Attack Speed",defPen:"Defense Penetration",finalDmg:"Final Damage"}
+};
+
+
+function inputHTML(id,value,unit){
+  const isPlainNumber = id==="attackPower" || id==="mainStat";
+  const shownValue = isPlainNumber ? Number(value).toLocaleString("en-US") : value;
+  return `<div class="input-wrap">
+    <input ${isPlainNumber ? 'type="text" inputmode="decimal"' : 'type="number" min="0" step="any"'}
+      id="${id}" value="${shownValue}" data-plain-number="${isPlainNumber ? "1" : "0"}">
+    ${unit ? `<span class="unit">${unit}</span>` : ""}
+  </div>`;
+}
+
+
+function renderDynamicInputs(preserve=true){
+  const baseSnapshot={}, tradeSnapshot={};
+  if(preserve){
+    fields.forEach(([id])=>{const el=document.getElementById(id); if(el) baseSnapshot[id]=el.value;});
+    tradable.forEach(([id])=>{
+      tradeSnapshot[id]={
+        dir:document.getElementById("dir_"+id)?.value,
+        drop:document.getElementById("drop_"+id)?.value,
+        gain:document.getElementById("gain_"+id)?.value
+      };
+    });
+  }
+  document.getElementById("baseInputs").innerHTML = fields.map(([id,label,val,unit]) => {
+    const note=id==="attackPower" ? `<span class="label-note">${i18n[currentLang].attackNote}</span>` : "";
+    return `<div class="row"><label for="${id}">${fieldNames[currentLang][id]}${note}</label>${inputHTML(id,val,unit)}</div>`;
+  }).join("");
+  document.getElementById("tradeInputs").innerHTML = tradable.map(([id,label,,unit]) =>
+    `<div class="trade-row">
+      <div>${fieldNames[currentLang][id]}</div>
+      <div class="adjust-wrap">
+        <select id="dir_${id}" aria-label="${fieldNames[currentLang][id]}">
+          <option value="-">−</option><option value="+">＋</option>
+        </select>
+        ${inputHTML("drop_"+id,0,unit)}
+      </div>
+      ${inputHTML("gain_"+id,0,"%")}
+    </div>`
+  ).join("");
+  if(preserve){
+    fields.forEach(([id])=>{if(baseSnapshot[id]!==undefined) document.getElementById(id).value=baseSnapshot[id];});
+    tradable.forEach(([id])=>{
+      const t=tradeSnapshot[id]; if(!t) return;
+      document.getElementById("dir_"+id).value=t.dir||"-";
+      document.getElementById("drop_"+id).value=t.drop??0;
+      document.getElementById("gain_"+id).value=t.gain??0;
+    });
+  }
+}
+renderDynamicInputs(false);
+
+function updateStarLabels(){
+  ["clueStars","bookStars"].forEach(id=>{
+    const select=document.getElementById(id);
+    if(!select) return;
+    [...select.options].forEach((opt,index)=>{
+      opt.textContent=currentLang==="zh" ? `${index} 星` : `${index}⭐`;
+    });
+  });
+}
+
+function applyLanguage(){
+  document.documentElement.lang=currentLang==="zh"?"zh-Hant":"en";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key=el.getAttribute("data-i18n");
+    if(i18n[currentLang][key]!==undefined) el.innerHTML=i18n[currentLang][key];
+  });
+  document.getElementById("langBtn").textContent=i18n[currentLang].lang;
+  document.getElementById("resetBtn").textContent=i18n[currentLang].reset;
+  renderDynamicInputs(true);
+  updateStarLabels();
+  calc();
+}
+
+function val(id){
+  const el=document.getElementById(id);
+  const raw=String(el.value).replace(/,/g,"");
+  let x=parseFloat(raw);
+  if(!Number.isFinite(x)) x=0;
+  if(x<0){x=0;el.value=0}
+  return x;
+}
+
+function formatPlainNumberInput(el){
+  if(el.dataset.plainNumber!=="1") return;
+  const raw=String(el.value).replace(/,/g,"").trim();
+  if(raw===""){ return; }
+  const n=Number(raw);
+  if(Number.isFinite(n) && n>=0){
+    el.value=n.toLocaleString("en-US",{maximumFractionDigits:2});
+  }
+}
+
+function pct(x){return `${x.toFixed(2).replace(/\.00$/,"")}%`;}
+function num(x){return x.toLocaleString(undefined,{maximumFractionDigits:2});}
+function changeClass(x){return x>1e-9?"good":x<-1e-9?"bad":"flat";}
+function signedPct(mult){
+  const delta=(mult-1)*100;
+  return `${delta>1e-9?"+":""}${delta.toFixed(2)}%`;
+}
+function setResult(id,mult){
+  const el=document.getElementById(id);
+  const delta=mult-1;
+  el.textContent=signedPct(mult);
+  el.className="value "+(delta>1e-9?"good":delta<-1e-9?"bad":"flat");
+}
+function safeRatio(a,b){return b===0 ? (a===0?1:0) : a/b;}
+
+function calc(){
+  const old={};
+  fields.forEach(([id]) => old[id]=val(id));
+
+  const drops={}, gains={}, dirs={};
+  tradable.forEach(([id])=>{
+    drops[id]=val("drop_"+id);
+    gains[id]=val("gain_"+id);
+    dirs[id]=document.getElementById("dir_"+id).value;
+  });
+
+  const totalGain=Object.values(gains).reduce((a,b)=>a+b,0);
+  const newCrit=old.critRate+totalGain;
+
+  const bookCarry=document.querySelector('input[name="ancientBook"]:checked').value==="carry";
+  const bookStars=parseInt(document.getElementById("bookStars").value,10) || 0;
+  const bookCritValues=[10,12,14,16,18,20];
+  const bookCritDmgValues=[30,36,42,48,54,60];
+  const bookCritAdd=bookCarry ? bookCritValues[bookStars] : 0;
+  const bookCritDmgPct=bookCarry ? bookCritDmgValues[bookStars] : 0;
+
+  const clueStars=parseInt(document.getElementById("clueStars").value,10) || 0;
+  const starMultiplier=[6,7.2,8.4,9.6,10.8,12][clueStars];
+
+  // 100% 以下不產生負層數；200% 以上最多只算 10 層。
+  const critStacks=Math.max(0,Math.min(10,Math.floor((newCrit-100)/10)));
+  const rawBasicAdd=critStacks*starMultiplier;
+  const newBasic=Math.max(0,old.basic+rawBasicAdd);
+  const actualBasicAdd=newBasic-old.basic;
+
+  const nw={...old};
+  tradable.forEach(([id])=>{
+    const isIncrease=dirs[id]==="+";
+    const signedAmount=(isIncrease ? 1 : -1)*drops[id];
+
+    if(id==="finalDmg"){
+      nw[id]=Math.max(0,(100+old[id])*(1+signedAmount/100)-100);
+    }else if(id==="attackSpeed"){
+      nw[id]=Math.max(0,Math.min(150,old[id] + signedAmount*((150-old[id])/150)));
+    }else if(id==="defPen"){
+      nw[id]=Math.max(0,Math.min(100,old[id] + signedAmount*((100-old[id])/100)));
+    }else{
+      nw[id]=Math.max(0,old[id] + signedAmount);
+    }
+  });
+
+  if(bookCarry){
+    const critRateIncrease=Math.max(0,newCrit-old.critRate);
+    nw.critDmg=Math.max(0,nw.critDmg + critRateIncrease*(bookCritDmgPct/100));
+  }
+
+  nw.critRate=newCrit;
+  nw.basic=newBasic;
+
+  const oldAvg=(old.maxAtk+old.minAtk)/2;
+  const newAvg=(nw.maxAtk+nw.minAtk)/2;
+
+  const oldDamage=old.attackPower*old.mainStat*(1+old.mainPct/100)*(1+old.dmgPct/100);
+  const newDamage=nw.attackPower*nw.mainStat*(1+nw.mainPct/100)*(1+nw.dmgPct/100);
+
+  const basicMul=(100+nw.basic)/(100+old.basic);
+  const critDmgMul=(100+nw.critDmg)/(100+old.critDmg);
+  const bossMul=(100+nw.boss)/(100+old.boss);
+  const normalMul=(100+nw.normal)/(100+old.normal);
+  const avgMul=safeRatio(newAvg,oldAvg);
+  const damageMul=safeRatio(newDamage,oldDamage);
+  const finalDmgMul=(100+nw.finalDmg)/(100+old.finalDmg);
+  const attackSpeedMul=(100+nw.attackSpeed)/(100+old.attackSpeed);
+
+  const bossDefense=val("bossDefense");
+  const normalDefense=val("normalDefense");
+  const playerDefense=val("playerDefense");
+  const oldPen=old.defPen/100;
+  const newPen=nw.defPen/100;
+
+  const bossDefenseMul=(6000 + bossDefense*(1-oldPen))/(6000 + bossDefense*(1-newPen));
+  const normalDefenseMul=(6000 + normalDefense*(1-oldPen))/(6000 + normalDefense*(1-newPen));
+  const playerDefenseMul=(5000 + playerDefense*(1-oldPen))/(5000 + playerDefense*(1-newPen));
+
+  const bossOut=basicMul*critDmgMul*bossMul*avgMul*damageMul*finalDmgMul*attackSpeedMul*bossDefenseMul;
+  const normalOut=basicMul*critDmgMul*normalMul*avgMul*damageMul*finalDmgMul*attackSpeedMul*normalDefenseMul;
+  const playerCore=basicMul*critDmgMul*avgMul*damageMul*finalDmgMul*playerDefenseMul;
+  const playerOut=Math.sqrt(Math.max(0,playerCore))*attackSpeedMul;
+
+  document.getElementById("critGain").textContent=`+${pct(totalGain)}`;
+  document.getElementById("newCritRate").textContent=pct(newCrit);
+  document.getElementById("bookStats").textContent=bookCarry
+    ? i18n[currentLang].bookLine(bookStars,bookCritAdd,bookCritDmgPct)
+    : i18n[currentLang].bookNone;
+  document.getElementById("basicAdd").textContent=
+    `${actualBasicAdd>=0?"+":""}${actualBasicAdd.toFixed(1).replace(/\.0$/,"")} %`;
+
+  const displayFields=[
+    ["basic",fieldNames[currentLang].basic,"%"],
+    ["critDmg",fieldNames[currentLang].critDmg,"%"],
+    ["critRate",fieldNames[currentLang].critRate,"%"],
+    ["attackPower",fieldNames[currentLang].attackPower,""],
+    ["boss",fieldNames[currentLang].boss,"%"],
+    ["normal",fieldNames[currentLang].normal,"%"],
+    ["maxAtk",fieldNames[currentLang].maxAtk,"%"],
+    ["minAtk",fieldNames[currentLang].minAtk,"%"],
+    ["mainStat",fieldNames[currentLang].mainStat,""],
+    ["mainPct",fieldNames[currentLang].mainPct,"%"],
+    ["dmgPct",fieldNames[currentLang].dmgPct,"%"],
+    ["attackSpeed",fieldNames[currentLang].attackSpeed,"%"],
+    ["defPen",fieldNames[currentLang].defPen,"%"],
+    ["finalDmg",fieldNames[currentLang].finalDmg,"%"]
+  ];
+
+  let rows=displayFields.map(([id,label,unit])=>{
+    const diff=nw[id]-old[id];
+    const oldText=unit?pct(old[id]):num(old[id]);
+    const newText=unit?pct(nw[id]):num(nw[id]);
+    const diffText=diff===0 ? "" :
+      ` <span class="change ${changeClass(diff)}">(${diff>0?"+":""}${unit?pct(diff):num(diff)})</span>`;
+    return `<div class="metric"><div>${label}</div><div>${oldText}</div><div class="new">${newText}${diffText}</div></div>`;
+  }).join("");
+
+  document.getElementById("metrics").innerHTML=rows;
+
+  setResult("bossResult",bossOut);
+  setResult("normalResult",normalOut);
+  setResult("playerResult",playerOut);
+}
+
+document.addEventListener("input",calc);
+document.addEventListener("change",calc);
+document.addEventListener("change",(e)=>{
+  if(e.target && e.target.name==="ancientBook"){
+    const carry=e.target.value==="carry" && e.target.checked;
+    const stars=document.getElementById("bookStars");
+    stars.disabled=!carry;
+    if(carry) stars.value="0";
+    calc();
+  }
+});
+document.addEventListener("blur",(e)=>{
+  if(e.target && e.target.matches('input[data-plain-number="1"]')){
+    formatPlainNumberInput(e.target);
+    calc();
+  }
+},true);
+
+document.getElementById("langBtn").addEventListener("click",()=>{ window.location.href="../zh/"; });
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  document.getElementById("clueStars").value=0;
+  fields.forEach(([id,,v])=>{
+    const el=document.getElementById(id);
+    el.value=(id==="attackPower" || id==="mainStat")
+      ? Number(v).toLocaleString("en-US")
+      : v;
+  });
+  tradable.forEach(([id])=>{
+    document.getElementById("drop_"+id).value=0;
+    document.getElementById("gain_"+id).value=0;
+    document.getElementById("dir_"+id).value="-";
+  });
+  document.querySelector('input[name="ancientBook"][value="none"]').checked=true;
+  document.getElementById("bookStars").value="0";
+  document.getElementById("bookStars").disabled=true;
+  document.getElementById("bossDefense").value=62100;
+  document.getElementById("normalDefense").value=5000;
+  document.getElementById("playerDefense").value=60000;
+  calc();
+});
+
+applyLanguage();
+</script>
+</body>
+</html>
