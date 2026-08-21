@@ -387,11 +387,34 @@ function calc(){
     const signedAmount=(isIncrease ? 1 : -1)*drops[id];
 
     if(id==="finalDmg"){
-      nw[id]=Math.max(0,(100+old[id])*(1+signedAmount/100)-100);
+      // 上升 N%：最終終傷倍率 × (1 + N/100)
+      // 下降 N%：最終終傷倍率 ÷ (1 + N/100)
+      const finalFactor=isIncrease
+        ? (1+drops[id]/100)
+        : 1/(1+drops[id]/100);
+      nw[id]=Math.max(0,(100+old[id])*finalFactor-100);
     }else if(id==="attackSpeed"){
-      nw[id]=Math.max(0,Math.min(150,old[id] + signedAmount*((150-old[id])/150)));
+      // 攻擊速度上升：
+      // C = A + B × (150 - A) / 150
+      // 攻擊速度下降使用精確逆函數：
+      // A = 150 - (150 - C) / (1 - B/150)
+      if(isIncrease){
+        nw[id]=Math.max(0,Math.min(150,old[id] + drops[id]*((150-old[id])/150)));
+      }else{
+        const factor=1-drops[id]/150;
+        nw[id]=factor<=0 ? 0 : Math.max(0,Math.min(150,150-(150-old[id])/factor));
+      }
     }else if(id==="defPen"){
-      nw[id]=Math.max(0,Math.min(100,old[id] + signedAmount*((100-old[id])/100)));
+      // 防禦穿透上升：
+      // C = A + B × (100 - A) / 100
+      // 防禦穿透下降使用精確逆函數：
+      // A = 100 - (100 - C) / (1 - B/100)
+      if(isIncrease){
+        nw[id]=Math.max(0,Math.min(100,old[id] + drops[id]*((100-old[id])/100)));
+      }else{
+        const factor=1-drops[id]/100;
+        nw[id]=factor<=0 ? 0 : Math.max(0,Math.min(100,100-(100-old[id])/factor));
+      }
     }else{
       nw[id]=Math.max(0,old[id] + signedAmount);
     }
@@ -428,7 +451,7 @@ function calc(){
 
   const bossDefenseMul=(6000 + bossDefense*(1-oldPen))/(6000 + bossDefense*(1-newPen));
   const normalDefenseMul=(6000 + normalDefense*(1-oldPen))/(6000 + normalDefense*(1-newPen));
-  const playerDefenseMul=(5000 + playerDefense*(1-oldPen))/(5000 + playerDefense*(1-newPen));
+  const playerDefenseMul=(6000 + playerDefense*(1-oldPen))/(6000 + playerDefense*(1-newPen));
 
   const bossOut=basicMul*critDmgMul*bossMul*avgMul*damageMul*finalDmgMul*attackSpeedMul*bossDefenseMul;
   const normalOut=basicMul*critDmgMul*normalMul*avgMul*damageMul*finalDmgMul*attackSpeedMul*normalDefenseMul;
