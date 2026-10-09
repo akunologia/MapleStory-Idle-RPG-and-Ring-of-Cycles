@@ -431,8 +431,12 @@ function calc(){
   const oldAvg=(old.maxAtk+old.minAtk)/2;
   const newAvg=(nw.maxAtk+nw.minAtk)/2;
 
-  const oldDamage=old.attackPower*old.mainStat*(1+old.mainPct/100)*(1+old.dmgPct/100);
-  const newDamage=nw.attackPower*nw.mainStat*(1+nw.mainPct/100)*(1+nw.dmgPct/100);
+  // 傷害量 = 攻擊力 × 主屬性 × (1+主屬性%/100) × (1+傷害%/100)
+  //          × [1 + 主屬性 × (1+主屬性%/100) × 100% / 10000]
+  const oldDamage=old.attackPower*old.mainStat*(1+old.mainPct/100)*(1+old.dmgPct/100)
+    *(1+old.mainStat*(1+old.mainPct/100)/10000);
+  const newDamage=nw.attackPower*nw.mainStat*(1+nw.mainPct/100)*(1+nw.dmgPct/100)
+    *(1+nw.mainStat*(1+nw.mainPct/100)/10000);
 
   const basicMul=(100+nw.basic)/(100+old.basic);
   const critDmgMul=(100+nw.critDmg)/(100+old.critDmg);
